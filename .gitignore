@@ -1,0 +1,5 @@
+sounds/*
+pocketsphinx-python
+.vscode
+venv
+.DS_Store
