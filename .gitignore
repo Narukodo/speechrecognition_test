@@ -3,3 +3,6 @@ pocketsphinx-python
 .vscode
 venv
 .DS_Store
+*.pyc
+__pycache__/
+.pytest_cache/
