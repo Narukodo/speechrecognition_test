@@ -5,13 +5,18 @@ from sounds import trial_sounds
 text = 'please call stella ask her to bring these things with her from the store six spoons of fresh snow peas five thick slabs of blue cheese and maybe a snack for her brother bob we also need a small plastic snake and a big toy frog for the kids she can scoop these things into three red bags and we will go meet her wednesday at the train station'
 
 class Experiment:
-    def trial(self, speech_to_text_fn):
-        sound_trials = []
-        for (idx, sound) in enumerate(trial_sounds):
-            start_time = datetime.datetime.now()
-            guess = speech_to_text_fn(trial_sounds)  # will take in a file
-            end_time = datetime.datetime.now()
-            sound_trials.append((start_time, end_time, self.calculate_accuracy(guess, idx)))
+    def run_experiment(self, speech_to_text_fn):
+        experiment_results = []
+        for i in range(5):
+            for sound in trial_sounds:
+                experiment_results.append(self.trial(speech_to_text_fn, sound))
+        return experiment_results
+
+    def trial(self, speech_to_text_fn, sound):
+        start_time = datetime.datetime.now()
+        guess = speech_to_text_fn(sound)  # will take in a file
+        end_time = datetime.datetime.now()
+        return (start_time - end_time, self.calculate_accuracy(guess))
 
     def edit_distance(self, words1, words2):
         if len(words1) == 0:
@@ -30,8 +35,8 @@ class Experiment:
         return ed_calc[len(words2)][len(words1)]
 
     # calculating accuracy by (edit distance)/number of words
-    def calculate_accuracy(self, guess, idx):
+    def calculate_accuracy(self, guess):
         guess_words = guess.split(' ')
         actual_words = text.split(' ')
-        ed = edit_distance(guess_words, actual_words)
+        ed = self.edit_distance(guess_words, actual_words)
         return ed/len(actual_words)
