@@ -3,12 +3,11 @@
 import speech_recognition as sr
 from pathlib import Path
 from os import path
+from experiment.experiment import Experiment
+from sounds import trial_sounds
 
-# obtain path to "english.wav" in the same folder as this script
-# AUDIO_FILE = Path().cwd() / 'sounds/phrases/recordings/afrikaans3.mp3'
-AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), "./sounds/bgnoise2.wav")
-# AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), "french.aiff")
-# AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), "chinese.flac")
+AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), "sounds/samples/clearspeech.wav")
+exp = Experiment()
 
 # use the audio file as the audio source
 r = sr.Recognizer()
@@ -16,24 +15,27 @@ r = sr.Recognizer()
 with sr.AudioFile(AUDIO_FILE) as source:
     audio = r.record(source)  # read the entire audio file
 
-# recognize speech using Sphinx
+# # recognize speech using Sphinx
 try:
-    print("Sphinx thinks you said " + r.recognize_sphinx(audio))
+    # print("Sphinx thinks you said " + r.recognize_sphinx(audio))
+    audio_text = r.recognize_sphinx(audio)
+    print(exp.run_experiment(r.recognize_sphinx))
 except sr.UnknownValueError:
     print("Sphinx could not understand audio")
 except sr.RequestError as e:
     print("Sphinx error; {0}".format(e))
 
-# recognize speech using Google Speech Recognition
-try:
-    # for testing purposes, we're just using the default API key
-    # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
-    # instead of `r.recognize_google(audio)`
-    print("Google Speech Recognition thinks you said " + r.recognize_google(audio))
-except sr.UnknownValueError:
-    print("Google Speech Recognition could not understand audio")
-except sr.RequestError as e:
-    print("Could not request results from Google Speech Recognition service; {0}".format(e))
+# # recognize speech using Google Speech Recognition
+# try:
+#     # for testing purposes, we're just using the default API key
+#     # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
+#     # instead of `r.recognize_google(audio)`
+#     print("Google Speech Recognition thinks you said " + r.recognize_google(audio))
+    
+# except sr.UnknownValueError:
+#     print("Google Speech Recognition could not understand audio")
+# except sr.RequestError as e:
+#     print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 # WIT_AI_KEY = "KDQ4NM7SLFJBP7CVBN6L2WWDGOT432Z2"  # Wit.ai keys are 32-character uppercase alphanumeric strings
 # try:
