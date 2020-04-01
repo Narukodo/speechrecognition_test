@@ -1,18 +1,22 @@
+from collections import namedtuple
 import speech_recognition as sr
 from pathlib import Path 
 import os
 import re
 
+WavInfo = namedtuple('WavInfo', ['filename', 'label', 'sound_bytes'])
 
-sound_folder = Path().cwd() / 'sounds/samples'
-text_names = [text_name for text_name in os.listdir(sound_folder) if os.path.isdir(sound_folder / text_name)]
-for text_name in text_names:
-    sound_file_names = [(text_name, file_name) for file_name in os.listdir(sound_folder / text_name) if re.match(r'^.+\.wav$', file_name)]
-    
-sound_files = [(text_name, os.path.join(os.path.dirname(os.path.realpath(__file__)), f'sounds/samples/{text_name}/{sound_file}')) for (text_name, sound_file) in sound_file_names]
+sound_samples_folder = Path().cwd() / 'sounds/samples'
+# indicate which text to compare speech to
+speech_labels = [folder_name for folder_name in os.listdir(sound_samples_folder) if os.path.isdir(sound_samples_folder / folder_name)]
+wav_filenames = []
+for speech_label in speech_labels:
+    curfolder_wavfiles = [(speech_label, wav_filename) for wav_filename in os.listdir(sound_samples_folder / speech_label) if re.match(r'^.+\.wav$', wav_filename)]
+    wav_filenames = wav_filenames + curfolder_wavfiles
+
+wav_filedata = [(wav_filename, speech_label, os.path.join(os.path.dirname(os.path.realpath(__file__)), f'sounds/samples/{speech_label}/{wav_filename}')) for (speech_label, wav_filename) in wav_filenames]
 r = sr.Recognizer()
 trial_sounds = []
-for (text_name, sound_file) in sound_files:
-    with sr.AudioFile(sound_file) as source:
-        trial_sounds.append((text_name, r.record(source)))
-# sound_file_names = [f for f in sound_folder.glob('**/*') if f.is_file()]
+for (wav_filename, speech_label, wav_filepath) in wav_filedata:
+    with sr.AudioFile(wav_filepath) as source:
+        trial_sounds.append(WavInfo(wav_filename, speech_label, r.record(source)))

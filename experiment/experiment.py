@@ -1,7 +1,12 @@
 import datetime
+from collections import namedtuple
+
+from experiment.spreadsheet import Spreadsheet
 
 from sounds import trial_sounds
+import speech_recognition as sr
 
+DataPoint = namedtuple('DataPoint', ['filename', 'seconds', 'milliseconds', 'wer'])
 
 text = 'please call stella ask her to bring these things with her from the store six spoons of fresh snow peas five thick slabs of blue cheese and maybe a snack for her brother bob we also need a small plastic snake and a big toy frog for the kids she can scoop these things into three red bags and we will go meet her wednesday at the train station'
 text2 = 'ultimately the goal is to ease the guidelines and open things up to very large sections of our country as we near the end of our historic battle with the invisible enemy it’s been going for a while but we win we win i said earlier today that i hope we can do this by easter i think that would be a great thing for our country and we’re all working very hard to make that a reality we’ll be meeting with a lot of people to see if it can be done easter is a very special day for many reasons for me for a lot of a lot of our friends it’s a very special day and what a great timeline this would be easter is our timeline what a great timeline that would be my first priority is always the health and safety of the american people i want everyone to understand that we are continuing to evaluate the data I’m also hopeful to have americans working again by that easter that beautiful easter day but rest assured every decision we make is grounded solely in the health safety and wellbeing of our citizens this is a medical crisis this isn’t a financial crisis but it’s a uh a thing that nobody has seen for many many decades nothing like this'
@@ -11,22 +16,29 @@ speeches = {
     'trump': text2
 }
 
+spreadsheet = Spreadsheet()
 
 class Experiment:
-    def run_experiment(self, speech_to_text_fn):
+    def run_experiment(self, engine_name, speech_to_text_fn):
+        spreadsheet.add_speech_engine(engine_name)
         experiment_results = []
-        for i in range(5):
-            for sound_and_name in trial_sounds:
-                experiment_results.append(self.trial(speech_to_text_fn, sound_and_name))
+        for wav_info in trial_sounds:
+            for i in range(5):
+                experiment_results.append(self.trial(speech_to_text_fn, wav_info))
+        spreadsheet.populate_table(engine_name, experiment_results)
         return experiment_results
 
-    def trial(self, speech_to_text_fn, sound_and_name):
-        (name, sound) = sound_and_name
+    # trial: function, WavInfo --> DataPoint
+    def trial(self, speech_to_text_fn, wav_info):
+        (filename, label, sound_bytes) = wav_info
         start_time = datetime.datetime.now()
-        guess = speech_to_text_fn(sound)  # will take in a file
+        try:
+            guess = speech_to_text_fn(sound_bytes)  # will take in a file
+        except sr.UnknownValueError:
+            return DataPoint(filename, -1, -1, -1)
         end_time = datetime.datetime.now()
         latency = start_time - end_time
-        return (latency.secondsm , self.calculate_accuracy(guess, name))
+        return DataPoint(filename, latency.seconds, latency.microseconds * 1000 , self.calculate_accuracy(guess, label))
 
     def edit_distance(self, words1, words2):
         if len(words1) == 0:
