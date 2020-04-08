@@ -13,3 +13,4 @@ __pycache__/
 *.txt
 *.mp3
 *.wav
+google-cloud-credentials.json
