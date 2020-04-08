@@ -1,4 +1,4 @@
-sounds/*
+recordings/
 pocketsphinx-python
 .vscode
 venv
@@ -6,3 +6,10 @@ venv
 *.pyc
 __pycache__/
 .pytest_cache/
+.env
+*.zip
+*.csv
+*.xlsx
+*.txt
+*.mp3
+*.wav
