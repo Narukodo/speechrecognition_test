@@ -1,10 +1,17 @@
 from collections import namedtuple
+from dataclasses import dataclass
 import speech_recognition as sr
 from pathlib import Path 
+from speech_recognition import AudioData
 import os
 import re
 
-WavInfo = namedtuple('WavInfo', ['filename', 'label', 'sound_bytes'])
+@dataclass
+class WavInfo:
+    filename: str
+    label: str
+    sound_bytes: AudioData=None
+    uri: str=None
 
 sound_samples_folder = Path().cwd() / 'sounds/samples'
 # indicate which text to compare speech to

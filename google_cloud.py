@@ -15,8 +15,6 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './google-cloud-credentials.json'
 def sample_long_running_recognize(storage_uri):
     client = speech_v1.SpeechClient()
 
-    # storage_uri = 'gs://cloud-samples-data/speech/brooklyn_bridge.raw'
-
     # The language of the supplied audio
     language_code = "en-US"
 
