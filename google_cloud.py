@@ -1,6 +1,5 @@
 from google.cloud import speech_v1
 from google.cloud.speech_v1 import enums
-from gcs_read import trial_sounds
 import speech_recognition as sr
 import io
 import os
@@ -10,7 +9,6 @@ r = sr.Recognizer()
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './google-cloud-credentials.json'
 
-# storage_uri pulled from gcs_read
 # completely disregarding uploading a file to cloud first
 def sample_long_running_recognize(storage_uri):
     client = speech_v1.SpeechClient()
@@ -41,8 +39,3 @@ def sample_long_running_recognize(storage_uri):
         alternative = result.alternatives[0]
         transcripts.append(alternative.transcript)
     return ' '.join(transcripts)
-
-# sample_long_running_recognize(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'sounds/samples/philippians/philippians.wav'))
-for sound in trial_sounds:
-    sample_long_running_recognize(sound.uri)
-# sample_long_running_recognize('gs://test_speech_rec_bucket/Overview Philippians.wav')
