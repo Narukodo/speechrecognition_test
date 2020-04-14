@@ -28,7 +28,10 @@ def sample_long_running_recognize(storage_uri):
     }
     audio = {"uri": storage_uri}
 
-    operation = client.long_running_recognize(config, audio)
+    try:
+        operation = client.long_running_recognize(config, audio)
+    except:
+        print(f'{storage_uri} was not found')
 
     response = operation.result()
 
@@ -37,7 +40,7 @@ def sample_long_running_recognize(storage_uri):
         # First alternative is the most probable result
         alternative = result.alternatives[0]
         transcripts.append(alternative.transcript)
-    print(' '.join(transcripts))
+    return ' '.join(transcripts)
 
 # sample_long_running_recognize(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'sounds/samples/philippians/philippians.wav'))
 for sound in trial_sounds:

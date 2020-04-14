@@ -1,10 +1,16 @@
 from collections import namedtuple
 from dataclasses import dataclass
+from dotenv import load_dotenv
+from google.cloud import storage
 import speech_recognition as sr
-from pathlib import Path 
 from speech_recognition import AudioData
 import os
+from pathlib import Path 
 import re
+# Imports the Google Cloud client library
+# from sounds import WavInfo
+
+r = sr.Recognizer()
 
 @dataclass
 class WavInfo:
@@ -13,17 +19,30 @@ class WavInfo:
     sound_bytes: AudioData=None
     uri: str=None
 
-sound_samples_folder = Path().cwd() / 'sounds/samples'
-# indicate which text to compare speech to
-speech_labels = [folder_name for folder_name in os.listdir(sound_samples_folder) if os.path.isdir(sound_samples_folder / folder_name)]
-wav_filenames = []
-for speech_label in speech_labels:
-    curfolder_wavfiles = [(speech_label, wav_filename) for wav_filename in os.listdir(sound_samples_folder / speech_label) if re.match(r'^.+\.wav$', wav_filename)]
-    wav_filenames = wav_filenames + curfolder_wavfiles
+def convert_to_audiofile(filepath):
+    with sr.AudioFile(filepath) as source:
+        return source
 
-wav_filedata = [(wav_filename, speech_label, os.path.join(os.path.dirname(os.path.realpath(__file__)), f'sounds/samples/{speech_label}/{wav_filename}')) for (speech_label, wav_filename) in wav_filenames]
-r = sr.Recognizer()
-trial_sounds = []
-for (wav_filename, speech_label, wav_filepath) in wav_filedata:
-    with sr.AudioFile(wav_filepath) as source:
-        trial_sounds.append(WavInfo(wav_filename, speech_label, r.record(source)))
+def initialize():
+    load_dotenv()
+
+    # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+    # Instantiates a client
+    storage_client = storage.Client()
+
+    # The name for the new bucket
+    bucket_name = "test_speech_rec_bucket"
+
+    speech_bucket = storage_client.get_bucket(bucket_name)
+    all_files = [blob for blob in list(speech_bucket.list_blobs()) if re.match(r'.*\/.*\.wav', blob.name)]
+    trial_sounds = []
+    for blob in all_files:
+        (sound_label, filename) = blob.name.split('/')
+        sounds_folder = Path(f'sounds/samples/{sound_label}')
+        # GCS and local storage assumed to be in sync
+        # The two need to be in sync for data collection purposes, however if need arises, a guard will be put in place
+        wav_filepath = os.path.realpath(sounds_folder / filename)
+        # with sr.AudioFile(wav_filepath) as source:
+        source = convert_to_audiofile(wav_filepath)
+        trial_sounds.append(WavInfo(filename, sound_label, sound_bytes=r.record(source), uri=f'gs://{blob.bucket.name}/{blob.name}'))
+    return trial_sounds

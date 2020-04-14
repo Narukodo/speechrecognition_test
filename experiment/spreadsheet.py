@@ -20,11 +20,6 @@ class Spreadsheet:
             if engine_entry.engine_name == speech_engine_name:
                 return engine_entry.col_index
         raise Exception(f'table for {speech_engine_name} does not exist')
-        # try:
-        #     table_index = self.tables.index(speech_engine_name)
-        # except ValueError:
-        #     raise Exception(f'speech recognition engine {speech_engine_name} does not exist')
-        # return self.next_col - 3 * (len(self.tables) - table_index)
 
     def add_speech_engine(self, speech_engine_name):
         try:
@@ -32,7 +27,7 @@ class Spreadsheet:
             raise Exception(f'{speech_engine_name} already exists')
         except:
             worksheet = self.workbook.active
-            self.populate_headings(self.next_col, speech_engine_name, ['File Name', 'Latency(s)', 'Latency(ms)', 'Word Error Rate'])
+            self.populate_headings(self.next_col, speech_engine_name, ['File Name', 'Word Error Rate'])
             self.next_col += 4
             self.save()
     
@@ -48,14 +43,10 @@ class Spreadsheet:
         worksheet = self.workbook.active
         cur_col = self.get_table_column(speech_engine_name)
         file_name = get_column_letter(cur_col)
-        latency_s = get_column_letter(cur_col + 1)
-        latency_ms = get_column_letter(cur_col + 2)
-        wer = get_column_letter(cur_col + 3)
+        wer = get_column_letter(cur_col + 1)
         row = 3
         for data_point in data:
             worksheet[f'{file_name}{row}'] = data_point.filename
-            worksheet[f'{latency_s}{row}'] = data_point.seconds
-            worksheet[f'{latency_ms}{row}'] = data_point.milliseconds
             worksheet[f'{wer}{row}'] = data_point.wer
             row += 1
         self.save()
