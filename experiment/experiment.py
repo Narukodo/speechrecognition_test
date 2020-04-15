@@ -7,7 +7,7 @@ from sounds import initialize
 import speech_recognition as sr
 from texts.texts import texts as speeches
 
-trial_sounds = sounds.initialize()
+trial_sounds = initialize()
 
 DataPoint = namedtuple('DataPoint', ['filename', 'wer'])
 
