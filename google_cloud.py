@@ -1,3 +1,4 @@
+from google.api_core.exceptions import GoogleAPICallError
 from google.cloud import speech_v1
 from google.cloud.speech_v1 import enums
 import speech_recognition as sr
@@ -27,8 +28,8 @@ def sample_long_running_recognize(storage_uri):
 
     try:
         operation = client.long_running_recognize(config, audio)
-    except:
-        print(f'{storage_uri} was not found')
+    except GoogleAPICallError as err:
+        print(f'Problem occurred with {storage_uri}:\n', err)
 
     response = operation.result()
 

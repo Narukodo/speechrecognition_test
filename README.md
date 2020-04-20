@@ -12,7 +12,7 @@ Speech data acquired from [Kaggle's speech accent archive](https://www.kaggle.co
 - Slow speech: hungarian8.wav
 - Thick accent: bambara4.wav
 - Normal speech: serbian9.wav
-An exerpt of Trump speaking on COVID-19 was used a real life example
+An excerpt of Trump speaking on COVID-19 was used a real life example
 An exposition of the book of Philippians was used as a lengthy example (approx. 9 minutes)
 
 ## Engines
