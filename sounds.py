@@ -1,32 +1,33 @@
-from collections import namedtuple
 from dataclasses import dataclass
 from dotenv import load_dotenv
 from google.cloud import storage
 import speech_recognition as sr
 from speech_recognition import AudioData
 import os
-from pathlib import Path 
+from pathlib import Path
 import re
 # Imports the Google Cloud client library
 # from sounds import WavInfo
 
 r = sr.Recognizer()
 
+
 @dataclass
 class WavInfo:
     filename: str
     label: str
-    sound_bytes: AudioData=None
-    uri: str=None
+    sound_bytes: AudioData = None
+    uri: str = None
+
 
 def convert_to_audiofile(filepath):
     with sr.AudioFile(filepath) as source:
         return source
 
+
 def initialize():
     load_dotenv()
 
-    # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
     # Instantiates a client
     storage_client = storage.Client()
 

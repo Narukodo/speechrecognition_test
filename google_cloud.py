@@ -1,13 +1,12 @@
 from google.cloud import speech_v1
 from google.cloud.speech_v1 import enums
 import speech_recognition as sr
-import io
 import os
-import requests
 
 r = sr.Recognizer()
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './google-cloud-credentials.json'
+
 
 # completely disregarding uploading a file to cloud first
 def sample_long_running_recognize(storage_uri):
