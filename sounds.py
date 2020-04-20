@@ -1,6 +1,5 @@
 from collections import namedtuple
 import speech_recognition as sr
-from speech_recognition import AudioData
 import os
 from pathlib import Path 
 import re
@@ -9,16 +8,18 @@ r = sr.Recognizer()
 
 WavInfo = namedtuple('WavInfo', ['filename', 'label', 'sound_bytes', 'uri'])
 
+
 def convert_to_audiofile(filepath):
     with sr.AudioFile(filepath) as source:
         return r.record(source)
+
 
 def initialize():
     # The name for the new bucket
     bucket_name = "test_speech_rec_bucket"
     trial_sounds = set()
     sound_sample_folder = Path('sound_samples/samples')
-    labels = [label for label in os.listdir(sound_sample_folder) if os.path.isdir(sound_sample_folder / label)]
+    labels = [sub_dir.name for sub_dir in sound_sample_folder.iterdir() if sub_dir.is_file()]
     for label in labels:
         wav_files = [filename for filename in os.listdir(sound_sample_folder / label) if re.match(r'.*?\.wav$', filename)]
         for wav_filename in wav_files:
