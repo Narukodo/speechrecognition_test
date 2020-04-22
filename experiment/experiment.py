@@ -9,7 +9,7 @@ from texts.texts import texts as speeches
 
 trial_sounds = initialize()
 
-DataPoint = namedtuple('DataPoint', ['filename', 'latency', 'wer'])
+DataPoint = namedtuple('DataPoint', ['filename', 'latency', 'wer', 'rps'])
 
 spreadsheet = Spreadsheet()
 

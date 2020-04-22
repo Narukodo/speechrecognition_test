@@ -26,7 +26,7 @@ class Spreadsheet:
             self.tables.index(speech_engine_name)
             raise Exception(f'{speech_engine_name} already exists')
         except Exception:
-            self.populate_headings(self.next_col, speech_engine_name, ['File Name', 'Latency', 'Word Error Rate'])
+            self.populate_headings(self.next_col, speech_engine_name, ['File Name', 'Latency (s)', 'Word Error Rate'])
             self.next_col += 4
             self.save()
     
@@ -44,7 +44,7 @@ class Spreadsheet:
         row = 3
         for data_point in data:
             for idx, prop in enumerate(data_point):
-                column_letter = get_column_letter(cur_col + (idx + 1))
+                column_letter = get_column_letter(cur_col + idx)
                 worksheet[f'{column_letter}{row}'] = prop
             row += 1
         self.save()
