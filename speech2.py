@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
 import speech_recognition as sr
-from pathlib import Path
-import json
-from os import path
 from experiment.experiment import Experiment
 from google_cloud import sample_long_running_recognize
 

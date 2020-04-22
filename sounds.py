@@ -19,7 +19,7 @@ def initialize():
     bucket_name = "test_speech_rec_bucket"
     trial_sounds = set()
     sound_sample_folder = Path('sound_samples/samples')
-    labels = [sub_dir.name for sub_dir in sound_sample_folder.iterdir() if sub_dir.is_file()]
+    labels = [sub_dir.name for sub_dir in sound_sample_folder.iterdir() if sub_dir.is_dir()]
     for label in labels:
         wav_files = [filename for filename in os.listdir(sound_sample_folder / label) if re.match(r'.*?\.wav$', filename)]
         for wav_filename in wav_files:

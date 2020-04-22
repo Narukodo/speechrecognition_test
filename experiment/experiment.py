@@ -9,9 +9,10 @@ from texts.texts import texts as speeches
 
 trial_sounds = initialize()
 
-DataPoint = namedtuple('DataPoint', ['filename', 'wer'])
+DataPoint = namedtuple('DataPoint', ['filename', 'latency', 'wer'])
 
 spreadsheet = Spreadsheet()
+
 
 class Experiment:
     def run_experiment(self, engine_name, speech_to_text_fn, field):
@@ -32,17 +33,17 @@ class Experiment:
         try:
             guess = speech_to_text_fn(sound_bytes)  # will take in a file
         except sr.UnknownValueError:
-            return DataPoint(filename, -1, -1, -1)
+            return DataPoint(filename, -1, -1)
         end_time = datetime.datetime.now()
-        latency = start_time - end_time
-        return DataPoint(filename, self.calculate_accuracy(guess, label))
+        latency = end_time - start_time
+        return DataPoint(filename, latency=latency.seconds, wer=self.calculate_accuracy(guess, label))
 
     def edit_distance(self, words1, words2):
         if len(words1) == 0:
             return len(words2)
         if len(words2) == 0:
             return len(words1)
-        ed_calc = [[idx + idx2 for idx in range(len(words1) + 1)] for idx2 in range(len(words2) + 1)] # edit distance calculations
+        ed_calc = [[idx + idx2 for idx in range(len(words1) + 1)] for idx2 in range(len(words2) + 1)]  # edit distance calculations
         
         for (idx2, word2) in enumerate(words2):
             for (idx1, word1) in enumerate(words1):
